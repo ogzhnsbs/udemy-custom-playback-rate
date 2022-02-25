@@ -5,6 +5,72 @@ import Switch from "react-switch";
 
 const options = [1, 2, 2.25, 2.5, 2.75, 3, 4];
 
+// Switch component to enable/disable extension
+const ExtensionActivator = ({ playbackRate, handleChange }) => {
+  return (
+    <div className="enable-wrapper">
+      <span style={{ marginRight: 8 }}>
+        {playbackRate.enabled ? "Active" : "Inactive"}
+      </span>
+      <Switch
+        onColor="#06f"
+        height={21}
+        width={42}
+        checked={playbackRate.enabled}
+        onChange={(checked) => {
+          handleChange((old) => ({
+            ...old,
+            enabled: checked,
+          }));
+        }}
+      />
+    </div>
+  );
+};
+
+// Input component for custom speed
+const CustomSpeed = ({ playbackRate, handleChange }) => {
+  return (
+    <div className="item" style={{ marginTop: 8 }}>
+      <span style={{ marginRight: 8 }}>Custom</span>
+      <input
+        type="number"
+        name="tentacles"
+        min=".25"
+        max="10"
+        step=".25"
+        value={playbackRate.value}
+        onChange={(event) => {
+          const newVal = parseFloat(event.target.value);
+          if (!isNaN(newVal)) {
+            handleChange({
+              ...playbackRate,
+              value: newVal,
+              custom: true,
+            });
+          }
+        }}
+      />
+      <input
+        type="radio"
+        name="speed"
+        value={playbackRate.value}
+        checked={playbackRate.custom}
+        onChange={(event) => {
+          const newVal = parseFloat(event.target.value);
+          if (!isNaN(newVal)) {
+            handleChange({
+              value: newVal,
+              custom: true,
+              enabled: playbackRate.enabled,
+            });
+          }
+        }}
+      />
+    </div>
+  );
+};
+
 const App = () => {
   const [playbackRate, setPlaybackRate] = React.useState({
     value: 1,
@@ -13,22 +79,21 @@ const App = () => {
   });
 
   const handleChange = (newPlaybackRate) => {
-    setPlaybackRate(newPlaybackRate);
-    chrome.storage.local.set({ playbackRate: newPlaybackRate }, () => {});
+    try {
+      setPlaybackRate(newPlaybackRate);
 
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      tabs.forEach((tab) => {
-        if (!tab?.url) {
-          return;
-        }
-
-        chrome.tabs.sendMessage(
-          tab.id,
-          { playbackRate: newPlaybackRate },
-          function () {}
-        );
+      // set storage and notify active tab
+      chrome.storage.local.set({ playbackRate: newPlaybackRate }, () => {});
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        try {
+          chrome.tabs.sendMessage(
+            tabs[0].id,
+            { playbackRate: newPlaybackRate },
+            function () {}
+          );
+        } catch (exception) {}
       });
-    });
+    } catch (exception) {}
   };
 
   const setStatusFromStorage = () => {
@@ -50,25 +115,9 @@ const App = () => {
   return (
     <div className="App">
       <div className="App-activation">
-        <div className="enable-wrapper">
-          <span style={{ marginRight: 8 }}>
-            {playbackRate.enabled ? "Active" : "Inactive"}
-          </span>
-          <Switch
-            onColor="#06f"
-            height={21}
-            width={42}
-            checked={playbackRate.enabled}
-            onChange={(checked) => {
-              handleChange({
-                ...playbackRate,
-                enabled: checked,
-              });
-            }}
-          />
-        </div>
+        <ExtensionActivator {...{ playbackRate, handleChange }} />
         <div
-          className="itemWrapper"
+          className="itemListWrapper"
           style={{ pointerEvents: playbackRate.enabled ? "auto" : "none" }}
         >
           {options.map((o, i) => {
@@ -77,14 +126,12 @@ const App = () => {
                 <span>{o}x</span>
                 <input
                   type="radio"
-                  value={o}
                   name="speed"
-                  checked={playbackRate.value === o && !playbackRate.custom}
+                  value={o}
+                  checked={!playbackRate.custom && playbackRate.value === o}
                   onChange={(event) => {
-                    const newVal = parseFloat(event.target.value);
                     handleChange({
-                      value: newVal,
-                      custom: false,
+                      value: parseFloat(event.target.value),
                       enabled: playbackRate.enabled,
                     });
                   }}
@@ -92,44 +139,7 @@ const App = () => {
               </div>
             );
           })}
-          <div className="item" style={{ marginTop: 8 }}>
-            <span style={{ marginRight: 8 }}>Custom</span>
-            <input
-              type="number"
-              id="tentacles"
-              name="tentacles"
-              min="1"
-              max="10"
-              step=".25"
-              value={playbackRate.value}
-              onChange={(event) => {
-                const newVal = parseFloat(event.target.value);
-                if (!isNaN(newVal)) {
-                  handleChange({
-                    value: newVal,
-                    custom: true,
-                    enabled: playbackRate.enabled,
-                  });
-                }
-              }}
-            />
-            <input
-              type="radio"
-              value={playbackRate.value}
-              name="speed"
-              checked={playbackRate.custom}
-              onChange={(event) => {
-                const newVal = parseFloat(event.target.value);
-                if (!isNaN(newVal)) {
-                  handleChange({
-                    value: newVal,
-                    custom: true,
-                    enabled: playbackRate.enabled,
-                  });
-                }
-              }}
-            />
-          </div>
+          <CustomSpeed {...{ playbackRate, handleChange }} />
         </div>
       </div>
     </div>
