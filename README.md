@@ -1,8 +1,8 @@
-# React Chrome Extension (Manifest v3) Boilerplate
+# Udemy Custom Playback Rate
+![alt text](https://github.com/ogzhnsbs/udemy-custom-playback-rate/blob/main/public/images/icon.png) 
 
-Starting point for creating a Chrome Browser Extension popup and service-worker based background script. Contains a custom Makefile to prepare your build for an unpacked local upload to chrome://extensions and prepares a zip file for direct upload to the Chrome Web Store.
-
-Traditionally browser extensions are built using vanilla JS. While this is certainly feasible, it is often cumbersome and inefficient when developing more complex extensions with a rich UI.
+## Set your favorite playback rate
+<img width="186" alt="image" src="https://user-images.githubusercontent.com/11215801/155684162-26402f30-8713-41a7-b6f5-47714de6bf33.png">
 
 ## Available Scripts
 
@@ -17,8 +17,3 @@ This command creates two things:
 
 1.  A `./dist` directory that contains the files for `chrome://extensions/` -- use this folder to load the unpacked extension
 2.  A file called latestBuild.zip, this .zip can be uploaded to the Developer Console when submitting your extension to the Chrome Web Store
-
-#### Known Limitations
-
-- Does not currently handle [Options](https://developer.chrome.com/docs/extensions/mv3/options/) or [Content Scripts](https://developer.chrome.com/docs/extensions/mv3/content_scripts/). For most use cases the options.html page from Chrome is unecessary as you can build an options menu into your popup directly. In order to enable content scripts and the options page, I recommend using `react-app-rewired` to replace the standard single entry point with three entry points for the popup, options, and content scripts.
-# udemy-custom-playback-rate
