@@ -4,12 +4,12 @@
   "version": "0.1",
   "description": "Udemy Custom Playback Rate",
   "permissions": ["activeTab", "storage"],
-  "host_permissions": ["*://*.udemy.com/*"],
+  "host_permissions": ["<all_urls>"],
   "author": "ogzhnsbs",
   "short_name": "Udemy Custom Playback Rate",
   "content_scripts": [
     {
-      "matches": ["*://*.udemy.com/*"],
+      "matches": ["<all_urls>"],
       "js": ["contentScript.js"]
     }
   ],

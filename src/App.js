@@ -14,16 +14,16 @@ const App = () => {
     setPlaybackRate(newPlaybackRate);
     chrome.storage.local.set({ playbackRate: newPlaybackRate }, () => {});
 
-    chrome.tabs.query({ currentWindow: true }, function (tabs) {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       tabs.forEach((tab) => {
         if (!tab?.url) {
           return;
         }
 
-        let domain = new URL(tab.url);
-        if (!domain.host.includes(".udemy.com")) {
-          return;
-        }
+        // let domain = new URL(tab.url);
+        // if (!domain.host.includes(".com")) {
+        //   return;
+        // }
 
         chrome.tabs.sendMessage(
           tab.id,
