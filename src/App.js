@@ -20,11 +20,6 @@ const App = () => {
           return;
         }
 
-        // let domain = new URL(tab.url);
-        // if (!domain.host.includes(".com")) {
-        //   return;
-        // }
-
         chrome.tabs.sendMessage(
           tab.id,
           { playbackRate: newPlaybackRate },
