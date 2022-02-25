@@ -71,6 +71,26 @@ const CustomSpeed = ({ playbackRate, handleChange }) => {
   );
 };
 
+const SkipRunningVideo = () => {
+  const handleEvent = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      try {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { skipRunningVideo: true },
+          function () {}
+        );
+      } catch (exception) {}
+    });
+  };
+
+  return (
+    <div className="skipVideoButton" onClick={handleEvent}>
+      Skip Running Video
+    </div>
+  );
+};
+
 const App = () => {
   const [playbackRate, setPlaybackRate] = React.useState({
     value: 1,
@@ -141,6 +161,7 @@ const App = () => {
           })}
           <CustomSpeed {...{ playbackRate, handleChange }} />
         </div>
+        <SkipRunningVideo />
       </div>
     </div>
   );

@@ -19,9 +19,33 @@ function setAllVideosPlaybackRate(playbackRate, doc = document) {
   } catch (exception) {}
 }
 
+function skipRunningVideos(doc = document) {
+  try {
+    const videos = doc.getElementsByTagName("video");
+    Array.from(videos).forEach((v) => {
+      if (!v.paused) {
+        console.log("v.src", v.src);
+        v.currentTime = v.duration;
+      }
+    });
+
+    const iframes = doc.getElementsByTagName("iframe");
+    Array.from(iframes).forEach((i) => {
+      const innerDoc = i.contentDocument || i.contentWindow.document;
+      if (innerDoc) {
+        skipRunningVideos(innerDoc);
+      }
+    });
+  } catch (exception) {}
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   sendResponse("ok");
-  setAllVideosPlaybackRate(message?.playbackRate);
+  if (message?.skipRunningVideo) {
+    skipRunningVideos();
+  } else {
+    setAllVideosPlaybackRate(message?.playbackRate);
+  }
 });
 
 function nodeInsertedCallback(event) {

@@ -19,6 +19,9 @@
   border-top-style: solid;
   border-top-width: 1px;
   border-top-color: #999;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #999;
 }
 
 .item {
@@ -32,4 +35,17 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.skipVideoButton {
+  padding: 0.5rem;
+  margin-top: 1rem;
+  background-color: #3b82f6;
+  border-radius: 0.5rem;
+  border-width: 1px;
+}
+
+.skipVideoButton:hover {
+  filter: brightness(85%);
+  cursor: pointer;
 }
