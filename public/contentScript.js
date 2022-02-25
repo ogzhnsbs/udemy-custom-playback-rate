@@ -5,7 +5,7 @@ function setAllVideosPlaybackRate(playbackRate, doc = document) {
   }
   const videos = doc.getElementsByTagName("video");
   Array.from(videos).forEach((v) => {
-    v.playbackRate = playbackRate;
+    v.playbackRate = playbackRate?.enabled ? playbackRate.value : 1;
   });
 
   const iframes = doc.getElementsByTagName("iframe");
@@ -18,13 +18,13 @@ function setAllVideosPlaybackRate(playbackRate, doc = document) {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  setAllVideosPlaybackRate(message?.playbackRate?.value);
+  setAllVideosPlaybackRate(message?.playbackRate);
   sendResponse("ok");
 });
 
 function nodeInsertedCallback(event) {
   chrome.storage.local.get(["playbackRate"], function (items) {
-    setAllVideosPlaybackRate(items["playbackRate"]?.value);
+    setAllVideosPlaybackRate(items["playbackRate"]);
   });
 }
 document.addEventListener("DOMNodeInserted", nodeInsertedCallback);
