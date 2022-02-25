@@ -4,7 +4,7 @@
 
 ## Set your favorite playback rate
 
-<img width="186" alt="image" src="https://user-images.githubusercontent.com/11215801/155684162-26402f30-8713-41a7-b6f5-47714de6bf33.png">
+<img width="242" alt="image" src="https://user-images.githubusercontent.com/11215801/155713459-dd978aa1-06bd-44f9-b7b7-d4136657b514.png">
 
 ## Available Scripts
 
