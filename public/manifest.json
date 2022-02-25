@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Udemy Custom Playback Rate",
+  "version": "0.1",
+  "description": "Udemy Custom Playback Rate",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["*://*.udemy.com/*"],
+  "author": "ogzhnsbs",
+  "short_name": "Udemy Custom Playback Rate",
+  "content_scripts": [
+    {
+      "matches": ["*://*.udemy.com/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Udemy Custom Playback Rate"
+  },
+  "icons": {
+    "128": "images/icon.png",
+    "16": "images/icon.png",
+    "48": "images/icon.png"
+  }
+}
