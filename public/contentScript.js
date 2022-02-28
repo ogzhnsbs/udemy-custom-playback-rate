@@ -1,51 +1,49 @@
 /*global chrome*/
-function setAllVideosPlaybackRate(playbackRate, doc = document) {
+function recursiveVideoHandler(handler, doc = document) {
   try {
-    if (!playbackRate) {
-      return;
-    }
     const videos = doc.getElementsByTagName("video");
     Array.from(videos).forEach((v) => {
-      v.playbackRate = playbackRate?.enabled ? playbackRate.value : 1;
+      handler(v);
     });
 
     const iframes = doc.getElementsByTagName("iframe");
     Array.from(iframes).forEach((i) => {
-      const innerDoc = i.contentDocument || i.contentWindow.document;
-      if (innerDoc) {
-        setAllVideosPlaybackRate(playbackRate, innerDoc);
-      }
+      try {
+        const innerDoc = i.contentDocument || i.contentWindow.document;
+        if (innerDoc) {
+          recursiveVideoHandler(handler, innerDoc);
+        }
+      } catch (ex) {}
     });
   } catch (exception) {}
 }
 
-function skipRunningVideos(doc = document) {
-  try {
-    const videos = doc.getElementsByTagName("video");
-    Array.from(videos).forEach((v) => {
-      if (!v.paused) {
-        console.log("v.src", v.src);
-        v.currentTime = v.duration;
-      }
-    });
+function setAllVideosPlaybackRate(playbackRate) {
+  if (!playbackRate) {
+    return;
+  }
 
-    const iframes = doc.getElementsByTagName("iframe");
-    Array.from(iframes).forEach((i) => {
-      const innerDoc = i.contentDocument || i.contentWindow.document;
-      if (innerDoc) {
-        skipRunningVideos(innerDoc);
-      }
-    });
-  } catch (exception) {}
+  recursiveVideoHandler((video) => {
+    video.playbackRate = playbackRate?.enabled ? playbackRate.value : 1;
+  });
+}
+
+function skipRunningVideos(skip) {
+  if (!skip) {
+    return;
+  }
+
+  recursiveVideoHandler((video) => {
+    if (!video.paused) {
+      video.currentTime = video.duration;
+    }
+  });
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   sendResponse("ok");
-  if (message?.skipRunningVideo) {
-    skipRunningVideos();
-  } else {
-    setAllVideosPlaybackRate(message?.playbackRate);
-  }
+  skipRunningVideos(message?.skipRunningVideo);
+  setAllVideosPlaybackRate(message?.playbackRate);
 });
 
 function nodeInsertedCallback(event) {
